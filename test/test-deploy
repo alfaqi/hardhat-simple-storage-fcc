@@ -1,0 +1,43 @@
+const { ethers } = require("hardhat");
+
+const { assert, expect } = require("chai");
+
+describe("Simple Storage", () => {
+  let simpleStorage;
+  beforeEach(async () => {
+    const SimpleStorage = await ethers.getContractFactory("SimpleStorage");
+    simpleStorage = await SimpleStorage.deploy();
+  });
+
+  it("Should start with a favorite number of 0", async () => {
+    const favoriteNumber = await simpleStorage.retrieve();
+    const expectedValue = "0";
+    expect(favoriteNumber).to.equal(expectedValue);
+    assert.equal(favoriteNumber, expectedValue);
+  });
+
+  //   it.only("Should update when we call store", async () => {
+  it("Should update when we call store", async () => {
+    const expectedValue = "7";
+    const transaction = await simpleStorage.store(expectedValue);
+    await transaction.wait(1);
+
+    const currentValue = await simpleStorage.retrieve();
+    assert.equal(currentValue, expectedValue);
+    expect(currentValue).to.equal(expectedValue);
+  });
+
+  it("Should add person when we call addPerson function", async () => {
+    const expectedNumber = "13";
+    const expectedName = "John";
+    const transaction = await simpleStorage.addPerson(
+      expectedName,
+      expectedNumber
+    );
+    await transaction.wait(1);
+
+    const currentValue = await simpleStorage.people(0);
+    assert.equal(currentValue.fovaroteNumber, expectedNumber);
+    assert.equal(currentValue.name, expectedName);
+  });
+});
